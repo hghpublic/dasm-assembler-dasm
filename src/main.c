@@ -558,7 +558,8 @@ static int MainShadow(int ac, char **av, int *pSortMode) {
     {
 
         SEGMENT *seg = (SEGMENT *)permalloc(sizeof(SEGMENT));
-        seg->name = strcpy(permalloc(strlen(ISEGNAME) + 1), ISEGNAME); /* was sizeof(ISEGNAME) = pointer size, not string length */
+        seg->name = strcpy(permalloc(strlen(ISEGNAME) + 1),
+                           ISEGNAME); /* was sizeof(ISEGNAME) = pointer size, not string length */
         seg->flags = seg->rflags = seg->initflags = seg->initrflags = SF_UNKNOWN;
         Csegment = Seglist = seg;
     }
@@ -1002,7 +1003,7 @@ static const char *cleanup(char *buf, bool bDisable) {
             ++str;
             if (*str == TAB)
                 *str = ' ';
-            if (*str == '\n' || *str == 0) {
+            if (*str == '\n' || *str == '\r' || *str == 0) {
                 str[0] = ' ';
                 str[1] = 0;
             }
