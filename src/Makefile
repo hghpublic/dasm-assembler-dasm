@@ -47,6 +47,7 @@ GWARN= -ansi -std=c99 -pedantic -Wall \
 #CFLAGS= $(GOPTI) $(GWARN) $(GDEBG)
 #LDFLAGS= -m32 -L/usr/lib32
 
+
 ifeq ($(OS),Windows_NT)
       detected_OS := Windows
 else
@@ -58,27 +59,59 @@ endif
 
 #CC= gcc
 
-OBJS= main.o ops.o globals.o exp.o symbols.o \
-      mne6303.o mne6502.o mne65c02.o mne68705.o mne6811.o mnef8.o mne68908.o
-SRCS= main.c ops.c globals.c exp.c symbols.c \
+# Per-platform object directory keeps Mac and Linux .o files from colliding
+# when the source tree is shared (e.g. mounted from macOS into a Linux VM).
+OBJDIR := .objs/$(detected_OS)
+$(shell mkdir -p $(OBJDIR))
+
+SRCS= main.c ops.c globals.c exp.c symbols.c errors.c util.c \
       mne6303.c mne6502.c mne65c02.c mne68705.c mne6811.c mnef8.c mne68908.c
 
+OBJS= $(addprefix $(OBJDIR)/, \
+      main.o ops.o globals.o exp.o symbols.o errors.o util.o \
+      mne6303.o mne6502.o mne65c02.o mne68705.o mne6811.o mnef8.o mne68908.o)
+
 ALL= dasm ftohex
+
+# Objects shared by dasm and the unit tests (everything except main.o)
+TEST_SHARED_OBJS= $(addprefix $(OBJDIR)/, \
+                  ops.o globals.o exp.o symbols.o errors.o util.o \
+                  mne6303.o mne6502.o mne65c02.o mne68705.o mne6811.o mnef8.o mne68908.o)
 
 all:  $(info    detected_OS is $(detected_OS)) \
       $(ALL)
 
-dasm: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o dasm $(LDFLAGS)
+# Pattern rule: compile any .c in the current dir to OBJDIR/%.o
+$(OBJDIR)/%.o: %.c
+	$(CC) -std=c11 $(CFLAGS) -c $< -o $@
 
-ftohex: ftohex.o
+dasm: $(OBJS)
+	$(CC) -std=c11 $(CFLAGS) $(OBJS) -o dasm $(LDFLAGS)
+
+ftohex: $(OBJDIR)/ftohex.o
+	$(CC) -std=c11 $(CFLAGS) $(OBJDIR)/ftohex.o -o ftohex $(LDFLAGS)
 
 obj: $(OBJS)
 
 $(OBJS): asm.h
 
+# Unit test binaries.
+# Tests provide their own stubs for pIncfile/FI_listfile/F_listfile so
+# globals.o (which also defines them, plus the whole mnemonic table) must
+# NOT be linked here.
+test_errors: $(OBJDIR)/test_errors.o $(OBJDIR)/errors.o $(OBJDIR)/util.o
+	$(CC) -std=c11 $(CFLAGS) $(OBJDIR)/test_errors.o $(OBJDIR)/errors.o $(OBJDIR)/util.o -o test_errors $(LDFLAGS)
+
+test_util: $(OBJDIR)/test_util.o $(OBJDIR)/errors.o $(OBJDIR)/util.o
+	$(CC) -std=c11 $(CFLAGS) $(OBJDIR)/test_util.o $(OBJDIR)/errors.o $(OBJDIR)/util.o -o test_util $(LDFLAGS)
+
+# Run all unit tests
+check: test_errors test_util
+	./test_errors
+	./test_util
+
 clean:
-	rm -rf *.o $(ALL) \
+	rm -rf .objs $(ALL) test_errors test_util \
 	dasm-alpha-*.tar.gz \
 	*.gcda *.gcno *.gcov gmon.out
 

@@ -8,12 +8,13 @@
     Copyright (c) 1995 by Olaf "Rhialto" Seibert.
     Copyright (c) 2003-2008 by Andrew Davie.
     Copyright (c) 2008 by Peter H. Froehlich.
+    Copyright (c) 2019-2026 by the DASM team.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
- 
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -32,6 +33,16 @@
 
 #include <stdbool.h>
 #include <string.h>
+
+/**
+ * @brief Path separator character for the host OS.
+ * Used by setprogname() to strip directory components from argv[0].
+ */
+#if defined(_WIN32) || defined(_WIN64)
+#define DASM_PATH_SEPARATOR '\\'
+#else
+#define DASM_PATH_SEPARATOR '/'
+#endif
 
 /**
  * @brief

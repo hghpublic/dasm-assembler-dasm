@@ -1,7 +1,12 @@
 *.o
-test/**/*.bin
-test/**/*.hex
-test/**/*.list.txt
+src/.objs/
 bin
 dasm
 ftohex
+.DS_Store
+test/**/*.out
+test/**/*.bin
+test/**/*.hex
+test/**/*.list.txt
+test/test-report.txt
+test/cmdline_defs/declare_var_mac.sym

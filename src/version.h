@@ -5,6 +5,7 @@
     Copyright (c) 1995 by Olaf "Rhialto" Seibert.
     Copyright (c) 2003-2008 by Andrew Davie.
     Copyright (c) 2008 by Peter H. Froehlich.
+    Copyright (c) 2019-2026 by the DASM team.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@
 /**
  * @brief Macro to provide current DASM release as a string.
  */
-#define DASM_RELEASE "2.20.15-SNAPSHOT"
+#define DASM_RELEASE "2.20.16"
 
 /**
  * @brief Macro to provide current DASM headline, including
@@ -48,25 +49,23 @@
  * all his later stuff starts at 1988, but ftohex.c is still
  * at 1987 even in his 2.16 release. We should settle this...
  */
-#define DASM_PRINT_COPYRIGHT \
-  (void) puts("Copyright (c) 1988-2020 by the DASM team.");
+#define DASM_PRINT_COPYRIGHT (void)puts("Copyright (c) 1988-2020 by the DASM team.");
 
 /**
  * @brief Macro to print standard DASM legalese, including
  * copyright, also for usage messages.
  */
-#define DASM_PRINT_LEGAL \
-  DASM_PRINT_COPYRIGHT \
-  (void) puts("License GPLv2+: GNU GPL version 2 or later (see file LICENSE)."); \
-  (void) puts("DASM is free software: you are free to change and redistribute it."); \
-  (void) puts("There is ABSOLUTELY NO WARRANTY, to the extent permitted by law."); \
+#define DASM_PRINT_LEGAL                                                                                               \
+    DASM_PRINT_COPYRIGHT                                                                                               \
+    (void)puts("License GPLv2+: GNU GPL version 2 or later (see file LICENSE).");                                     \
+    (void)puts("DASM is free software: you are free to change and redistribute it.");                                  \
+    (void)puts("There is ABSOLUTELY NO WARRANTY, to the extent permitted by law.");
 
 /**
  * @brief Macro to print bug report message, once again for
  * usage messages.
  */
-#define DASM_PRINT_BUGS \
-  (void) puts("Report bugs on https://github.com/dasm-assembler/dasm please!");
+#define DASM_PRINT_BUGS (void)puts("Report bugs on https://github.com/dasm-assembler/dasm please!");
 
 #endif /* _DASM_VERSION_H */
 
